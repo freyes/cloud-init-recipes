@@ -1,0 +1,1 @@
+sudo kvm -bios /usr/share/qemu/OVMF.fd -m 4G -smp 2 -cpu host -nographic -serial mon:stdio -no-reboot -m 1024 -drive file=image.raw,format=raw,cache=none,if=virtio -cdrom ./ubuntu-20.04-live-server-amd64.iso -kernel ./vmlinuz -initrd ./initrd -append autoinstall ds=nocloud-net;s=http://192.168.10.237/focal/ console=ttyS0,115200n8

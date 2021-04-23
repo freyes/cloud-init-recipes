@@ -1,0 +1,112 @@
+#cloud-config
+autoinstall:
+  version: 1
+  identity:
+    hostname: ubuntu
+    password: "$6$exDY1mhS4KUYCE/2$zmn9ToZwTKLhCw.b4/b.ZRTIZM30JZ4QrOQ2aOXJ8yk96xpcCof0kxKwuX1kqLG/ygbJ1f8wxED22bTL4F46P0"
+    username: ubuntu
+    realname: ubuntu
+  network:
+    network:
+      version: 2
+      ethernets:
+        eno1:
+          critical: true
+          dhcp-identifier: mac
+          dhcp4: true
+  ssh:
+    allow-pw: true
+    authorized-keys: []
+    install-server: true
+  #proxy: http://192.168.10.237:3128/
+  apt:
+    geoip: false
+    preserve_sources_list: false
+    primary:
+    - arches: [amd64, i386]
+      uri: http://archive.ubuntu.com/ubuntu
+    - arches: [default]
+      uri: http://ports.ubuntu.com/ubuntu-ports
+  stages: [early, partitioning, extract, curthooks, hook, late]
+  kernel:
+    package: linux-generic
+  write_files:
+    path: /run/kernel-meta-package
+    content: |
+      linux-virtual
+    permissions: "0644"
+  swap:
+    size: 0
+  verbosity: 3
+  reporting:
+    keyname2:
+      type: print
+  storage:
+    version: 1
+    config:
+    - id: vda
+      #grub_device: true
+      name: vda
+      path: /dev/vda
+      ptable: gpt
+      type: disk
+      wipe: superblock-recursive
+    - device: vda
+      id: vda-part1
+      name: vda-part1
+      number: 1
+      grub_device: true
+      offset: 4194304B
+      size: 512MB
+      type: partition
+      uuid: afe6b756-bade-4ffd-849e-2bf1def10234
+      wipe: superblock
+    - device: vda
+      id: vda-part2
+      name: vda-part2
+      number: 2
+      size: 1GB
+      type: partition
+      uuid: e1990bc7-b41e-43c3-b64f-16f75d322ae7
+      wipe: superblock
+    - device: vda
+      id: vda-part3
+      name: vda-part3
+      number: 3
+      size: 18GB
+      type: partition
+      uuid: 7287c909-1b0f-4f96-b5a0-40dfa77eb32f
+      wipe: superblock
+    - fstype: fat32
+      id: vda-part1_format
+      label: ''
+      type: format
+      uuid: 5019d149-a979-42c8-8c76-f1f0829630db
+      volume: vda-part1
+    - fstype: swap
+      id: vda-part2_format
+      label: ''
+      type: format
+      uuid: 2f23c47c-1094-46c6-8291-046217df8fca
+      volume: vda-part2
+    - fstype: ext4
+      id: vda-part3_format
+      label: ''
+      type: format
+      uuid: d74a7ff0-fd97-4bfb-b3c1-de50de792168
+      volume: vda-part3
+    - device: vda-part3_format
+      id: vda-part3_mount
+      options: ''
+      path: /
+      type: mount
+    - device: vda-part1_format
+      id: vda-part1_mount
+      options: ''
+      path: /boot/efi
+      type: mount
+    - device: vda-part2_format
+      id: vda-part2_mount
+      options: ''
+      type: mount
+      #path: ''
